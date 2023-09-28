@@ -1,3 +1,6 @@
+import start from './tracer';
+start('todo-service'); //change to 'todo-service' according to the file.
+
 import express from 'express';
 import axios from 'axios';
 const app = express();

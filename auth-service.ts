@@ -1,3 +1,7 @@
+import start from './tracer';
+start('auth-service'); //change to 'todo-service' according to the file.
+
+
 import express from 'express';
 const app = express();
 
