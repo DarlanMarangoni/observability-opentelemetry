@@ -7,6 +7,7 @@ import axios from 'axios';
 const app = express();
 
 import Redis from "ioredis";
+import { api } from '@opentelemetry/sdk-node';
 const redis = new Redis({host:'redis'});
 
 const calls = meter.createHistogram('http-calls');
@@ -42,8 +43,19 @@ app.get('/todos', async (req, res) => {
     }
 
     if(req.query['fail']){
-        console.error('Really bad error!');
-        res.sendStatus(500);
+        try {
+            throw new Error('Really bad error!')
+        } catch (e: any) {
+            const activeSpan = api.trace.getSpan(api.context.active());
+            activeSpan?.recordException(e)
+            console.error('Really bad error!', {
+                spanId: activeSpan?.spanContext().spanId,
+                traceId: activeSpan?.spanContext().traceId,
+                traceFlag: activeSpan?.spanContext().traceFlags,
+            });
+            res.sendStatus(500);
+            return;
+        }
     }
 
     res.json({ todos, user:user.data });

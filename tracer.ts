@@ -19,7 +19,8 @@ function start(serviceName: string) {
         resource: new Resource({
             [SemanticResourceAttributes.SERVICE_NAME]: serviceName,
         }),
-    });    meterProvider.addMetricReader(exporter);
+    });
+    meterProvider.addMetricReader(exporter);
     const meter = meterProvider.getMeter('my-service-meter');
 
     const traceExporter = new OTLPTraceExporter({
@@ -28,7 +29,7 @@ function start(serviceName: string) {
 
     const sdk = new NodeSDK({
         traceExporter,
-        serviceName:serviceName,
+        serviceName: serviceName,
         instrumentations: [getNodeAutoInstrumentations()]
     });
 
